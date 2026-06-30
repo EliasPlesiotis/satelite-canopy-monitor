@@ -34,7 +34,7 @@ class CanopyTileService(ICanopyTileService):
             return None
 
         images = [None] * len(tiles)
-        max_failures = max(1, len(tiles) // 2)
+        max_failures = min(len(tiles), 20)
         failures = 0
 
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:

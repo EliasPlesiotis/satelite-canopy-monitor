@@ -38,3 +38,9 @@ class IWeatherStationRepository(ABC):
     @abstractmethod
     def get_weather_stations(self) -> list[dict]:
         raise NotImplementedError
+
+
+class IHeatMapRepository(ABC):
+    @abstractmethod
+    def get_heat_map(self, city: str, time: str) -> bytes | None:
+        raise NotImplementedError
