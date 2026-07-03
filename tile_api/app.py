@@ -7,14 +7,12 @@ from satelite_temperature_prediction.tile_api.repositories.cached_image_reposito
 from satelite_temperature_prediction.tile_api.repositories.cached_model_repository import CachedModelRepository
 from satelite_temperature_prediction.tile_api.repositories.google_earth_image_repository import GoogleEarthImageRepository
 from satelite_temperature_prediction.tile_api.repositories.model_repository import KerasModelRepository
-from satelite_temperature_prediction.tile_api.repositories.neighborhood_repository import SqliteNeighborhoodRepository
 from satelite_temperature_prediction.tile_api.repositories.weather_station_repository import JsonWeatherStationRepository
 from satelite_temperature_prediction.tile_api.repositories.meteoblue_heat_map_repository import MeteoblueHeatMapRepository
 from satelite_temperature_prediction.tile_api.repositories.cached_heat_map_repository import CachedHeatMapRepository
 
 from satelite_temperature_prediction.tile_api.application.tile_service import TileService
 from satelite_temperature_prediction.tile_api.application.canopy_service import CanopyTileService
-from satelite_temperature_prediction.tile_api.application.neighborhood_service import NeighborhoodService
 from satelite_temperature_prediction.tile_api.application.tile_service import TileService
 from satelite_temperature_prediction.tile_api.application.spatial_query_engine import SpatialQueryEngine
 from satelite_temperature_prediction.tile_api.application.tile_stitcher import TileStitcher
@@ -22,7 +20,6 @@ from satelite_temperature_prediction.tile_api.application.weather_station_servic
 from satelite_temperature_prediction.tile_api.application.heat_map_service import HeatMapService
 
 from satelite_temperature_prediction.tile_api.handlers.zxy_handler import ZxyHandler
-from satelite_temperature_prediction.tile_api.handlers.neighborhood_handler import NeighborhoodHandler
 from satelite_temperature_prediction.tile_api.handlers.weather_station_handler import WeatherStationHandler
 from satelite_temperature_prediction.tile_api.handlers.heat_map_handler import HeatMapHandler
 
@@ -50,7 +47,6 @@ MODEL_PATH = Path("./models/tree_mask_autoencoder_model.keras")
 
 google_earth_repository = GoogleEarthImageRepository()
 canopy_model_repository = KerasModelRepository(str(MODEL_PATH))
-neighborhood_repository = SqliteNeighborhoodRepository(NEIGHBORHOODS_SQLITE)
 weather_station_repository = JsonWeatherStationRepository(DATA_DIR / "weather_stations_joined.json")
 heat_map_repository = MeteoblueHeatMapRepository()
 
@@ -63,7 +59,6 @@ spatial_tile_engine = SpatialQueryEngine(base_zoom=18)
 
 canopy_service = CanopyTileService(spatial_tile_engine, tile_sticher, cached_google_earth_repository, cached_canopy_model_repository)
 satelite_service = TileService(spatial_tile_engine, tile_sticher, cached_google_earth_repository)
-neighborhood_service = NeighborhoodService(neighborhood_repository)
 weather_station_service = WeatherStationService(weather_station_repository)
 heat_map_service = HeatMapService(cached_heat_map_repository)
 
@@ -72,14 +67,6 @@ zxy_router = APIRouter()
 zxy_router.add_api_route("/v1/canopy/{z}/{x}/{y}.png", zxy_handler.get_canopy_tile, methods=["GET"])
 zxy_router.add_api_route("/v1/satelite/{z}/{x}/{y}.png", zxy_handler.get_satelite_tile, methods=["GET"])
 app.include_router(zxy_router)
-
-neighborhood_handler = NeighborhoodHandler(neighborhood_service)
-neighborhood_router = APIRouter()
-neighborhood_router.add_api_route("/v1/neighborhood-list", neighborhood_handler.get_neighborhood_list, methods=["GET"])
-neighborhood_router.add_api_route("/v1/neighborhoods", neighborhood_handler.post_neighborhoods_by_fids, methods=["POST"])
-neighborhood_router.add_api_route("/v1/neighborhoods", neighborhood_handler.get_neighborhoods_geojson, methods=["GET"])
-neighborhood_router.add_api_route("/v1/neighborhoods/timeseries", neighborhood_handler.post_neighborhood_temperatures, methods=["POST"])
-app.include_router(neighborhood_router)
 
 weather_station_handler = WeatherStationHandler(weather_station_service)
 weather_station_router = APIRouter()

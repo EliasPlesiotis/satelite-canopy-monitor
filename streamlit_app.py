@@ -25,7 +25,7 @@ encoded_time = quote(formatted_time)
 
 
 
-m = folium.Map(location=[center_lat, center_lon], zoom_start=17)
+m = folium.Map(location=[center_lat, center_lon], tiles="Cartodb dark_matter", zoom_start=17)
 
 folium.TileLayer(
     tiles='http://localhost:8000/v1/satelite/{z}/{x}/{y}.png',

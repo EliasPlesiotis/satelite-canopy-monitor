@@ -2,7 +2,6 @@ import tensorflow as tf
 import cv2
 import numpy as np
 from concurrent.futures import ProcessPoolExecutor
-import multiprocessing
 import atexit
 import threading
 import io
