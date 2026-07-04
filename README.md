@@ -8,6 +8,7 @@ The core of the system is the **Tile API** — a FastAPI-powered map tile server
 
 ## Table of Contents
 
+- [Running the Project](#running-the-project)
 - [Overview](#overview)
 - [Tile API](#tile-api)
   - [Architecture](#architecture)
@@ -17,9 +18,25 @@ The core of the system is the **Tile API** — a FastAPI-powered map tile server
   - [Application Services](#application-services)
   - [Repositories and Caching](#repositories-and-caching)
 - [U-Net Canopy Model](#u-net-canopy-model)
-- [Running the Project](#running-the-project)
 
 ---
+
+### Start the Tile API
+
+```bash
+# From the workspace root
+uvicorn tile_api.app:app --host 0.0.0.0 --port 8000 --reload
+```
+
+The API will be available at `http://localhost:8000`. Interactive docs at `http://localhost:8000/docs`.
+
+### Start the Streamlit Viewer
+
+```bash
+# In a separate terminal, from the workspace root
+streamlit run streamlit_app.py
+```
+
 
 ## Overview
 
@@ -30,6 +47,12 @@ It does so by:
 1. Fetching high-resolution satellite tiles from Google Earth at zoom level 18.
 2. Running each tile through a custom **U-Net autoencoder** to produce a binary tree-canopy mask.
 3. Overlaying Meteoblue city-scale temperature heat maps.
+
+### Layers Processing Flow
+
+| 1. Open Street Maps | 2. Satellite Imagery | 3. Canopy Mask | 4. Temperature Heatmap |
+| :---: | :---: | :---: | :---: |
+| <img src="docs/image1.png" width="200" alt="Satellite Tile"> | <img src="docs/image2.png" width="200" alt="Canopy Mask"> | <img src="docs/image%203.png" width="200" alt="Temperature Heatmap"> | <img src="docs/image%204.png" width="200" alt="Combined Layers"> |
 
 Google Earth and canopy layers are served as standard **XYZ map tiles** so any mapping library (Leaflet, Folium, MapLibre…) can consume them directly.
 
@@ -371,22 +394,6 @@ The trained model weights are stored in `models/tree_mask_autoencoder_model.kera
 - FastAPI + Uvicorn
 - Pillow, OpenCV, NumPy
 - Streamlit, Folium, streamlit-folium
-
-### Start the Tile API
-
-```bash
-# From the workspace root
-uvicorn tile_api.app:app --host 0.0.0.0 --port 8000 --reload
-```
-
-The API will be available at `http://localhost:8000`. Interactive docs at `http://localhost:8000/docs`.
-
-### Start the Streamlit Viewer
-
-```bash
-# In a separate terminal, from the workspace root
-streamlit run streamlit_app.py
-```
 
 ### Caches
 
