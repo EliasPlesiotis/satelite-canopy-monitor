@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 
-from satelite_temperature_prediction.tile_api.application.weather_station_service import IWeatherStationService
+from tile_api.application.weather_station_service import IWeatherStationService
 
 
 class WeatherStationHandler:

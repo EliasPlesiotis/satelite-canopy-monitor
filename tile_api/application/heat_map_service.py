@@ -1,4 +1,4 @@
-from satelite_temperature_prediction.tile_api.application.repositories import IHeatMapRepository
+from tile_api.application.repositories import IHeatMapRepository
 
 class HeatMapService:
     def __init__(self, heat_map_repository: IHeatMapRepository):

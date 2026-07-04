@@ -2,7 +2,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from satelite_temperature_prediction.tile_api.application.repositories import ISateliteImageRepository
+from tile_api.application.repositories import ISateliteImageRepository
 
 try:
     Resampling = Image.Resampling

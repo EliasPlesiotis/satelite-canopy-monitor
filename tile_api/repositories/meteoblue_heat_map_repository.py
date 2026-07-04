@@ -1,6 +1,6 @@
 import urllib.request
 import urllib.parse
-from satelite_temperature_prediction.tile_api.application.repositories import IHeatMapRepository
+from tile_api.application.repositories import IHeatMapRepository
 
 class MeteoblueHeatMapRepository(IHeatMapRepository):
     def __init__(self, timeout: int = 20):

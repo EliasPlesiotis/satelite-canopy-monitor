@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from satelite_temperature_prediction.tile_api.application.repositories import IWeatherStationRepository
+from tile_api.application.repositories import IWeatherStationRepository
 
 
 class IWeatherStationService(ABC):

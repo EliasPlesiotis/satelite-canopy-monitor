@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from satelite_temperature_prediction.tile_api.application.entities.tile import Tile
-from satelite_temperature_prediction.tile_api.application.repositories import ISateliteImageRepository
-from satelite_temperature_prediction.tile_api.application.spatial_query_engine import ISpatialQueryEngine
-from satelite_temperature_prediction.tile_api.application.tile_stitcher import TileStitcher
+from tile_api.application.entities.tile import Tile
+from tile_api.application.repositories import ISateliteImageRepository
+from tile_api.application.spatial_query_engine import ISpatialQueryEngine
+from tile_api.application.tile_stitcher import TileStitcher
 
 class ITileService(ABC):
     @abstractmethod

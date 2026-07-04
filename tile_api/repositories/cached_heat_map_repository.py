@@ -1,6 +1,6 @@
 import hashlib
 from pathlib import Path
-from satelite_temperature_prediction.tile_api.application.repositories import IHeatMapRepository
+from tile_api.application.repositories import IHeatMapRepository
 
 class CachedHeatMapRepository(IHeatMapRepository):
     def __init__(self, repository: IHeatMapRepository, cache_dir: Path):

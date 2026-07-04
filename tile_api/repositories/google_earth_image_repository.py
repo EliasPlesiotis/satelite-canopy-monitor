@@ -1,6 +1,6 @@
 import urllib.request
 
-from satelite_temperature_prediction.tile_api.application.repositories import ISateliteImageRepository
+from tile_api.application.repositories import ISateliteImageRepository
 
 
 class GoogleEarthImageRepository(ISateliteImageRepository):

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from satelite_temperature_prediction.tile_api.application.entities.tile import Tile
+from tile_api.application.entities.tile import Tile
 
 class ISpatialQueryEngine(ABC):
     @abstractmethod

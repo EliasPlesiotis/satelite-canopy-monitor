@@ -1,7 +1,7 @@
 import hashlib
 from pathlib import Path
 
-from satelite_temperature_prediction.tile_api.application.repositories import IModelRepository
+from tile_api.application.repositories import IModelRepository
 
 
 class CachedModelRepository(IModelRepository):

@@ -7,8 +7,8 @@ import threading
 import io
 from PIL import Image
 
-from satelite_temperature_prediction.tile_api.application.repositories import IModelRepository
-from satelite_temperature_prediction.tile_api.repositories.model import Unet
+from tile_api.application.repositories import IModelRepository
+from tile_api.repositories.model import Unet
 
 
 _WORKER_MODEL = None
@@ -74,7 +74,6 @@ class KerasModelRepository(IModelRepository):
         return self.batch_predict([input_image])[0]
 
     def batch_predict(self, input_images):
-        self.load_model()
         CHUNK_SIZE = 8
         outputs = []
 

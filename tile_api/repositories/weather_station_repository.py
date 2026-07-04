@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from satelite_temperature_prediction.tile_api.application.repositories import IWeatherStationRepository
+from tile_api.application.repositories import IWeatherStationRepository
 
 
 class JsonWeatherStationRepository(IWeatherStationRepository):

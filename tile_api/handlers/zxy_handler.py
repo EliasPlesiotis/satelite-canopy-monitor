@@ -1,6 +1,6 @@
 from fastapi import HTTPException, Response
-from satelite_temperature_prediction.tile_api.application.tile_service import ITileService
-from satelite_temperature_prediction.tile_api.application.canopy_service import ICanopyTileService
+from tile_api.application.tile_service import ITileService
+from tile_api.application.canopy_service import ICanopyTileService
 
 class ZxyHandler:
     def __init__(self, canopy_service: ICanopyTileService, satelite_service: ITileService):

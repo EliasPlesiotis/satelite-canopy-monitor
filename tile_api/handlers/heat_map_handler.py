@@ -1,5 +1,5 @@
 from fastapi import HTTPException, Response
-from satelite_temperature_prediction.tile_api.application.heat_map_service import HeatMapService
+from tile_api.application.heat_map_service import HeatMapService
 
 class HeatMapHandler:
     def __init__(self, heat_map_service: HeatMapService):
