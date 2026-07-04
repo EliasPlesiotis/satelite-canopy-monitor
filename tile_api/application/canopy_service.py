@@ -1,4 +1,3 @@
-from PIL import Image
 from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
 

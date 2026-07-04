@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 from typing import Any
-import pandas as pd
 
 from satelite_temperature_prediction.tile_api.application.repositories import IWeatherStationRepository
 

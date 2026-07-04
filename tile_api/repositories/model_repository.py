@@ -48,18 +48,12 @@ def _predict_chunk_worker(chunk_images):
 class KerasModelRepository(IModelRepository):
     def __init__(self, model_path: str, workers=2):
         self.model_path = model_path
-        self.model = None
         self.executor = None
         self.max_workers = workers
 
         threading.Thread(target=self._ensure_executor, daemon=True).start()
 
         atexit.register(self._shutdown_executor)
-
-    def load_model(self):
-        if self.model is None:
-            self.model = tf.keras.models.load_model(self.model_path, custom_objects={"Unet": Unet})
-        return self.model
 
     def _ensure_executor(self):
         if self.executor is not None:

@@ -37,7 +37,6 @@ app.add_middleware(
 # Root directory of the workspace
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = ROOT_DIR / "data"
-NEIGHBORHOODS_SQLITE = DATA_DIR / "neighborhood_athens.sqlite"
 
 CANOPY_CACHE_DIR = Path("./.canopy_cache")
 TILE_CACHE_DIR = Path("./.tile_cache")
