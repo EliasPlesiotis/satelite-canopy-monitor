@@ -51,14 +51,12 @@ The Tile API follows a clean **3-layer hexagonal architecture**:
 graph TD
     subgraph Handlers
         ZXY[ZxyHandler]
-        WSH[WeatherStationHandler]
         HMH[HeatMapHandler]
     end
 
     subgraph Services
         CTS[CanopyTileService]
         TS[TileService]
-        WSS[WeatherStationService]
         HMS[HeatMapService]
     end
 
@@ -76,13 +74,11 @@ graph TD
     subgraph ConcreteRepositories
         GER[GoogleEarthImageRepository]
         KMR[KerasModelRepository]
-        JWR[JsonWeatherStationRepository]
         MHR[MeteoblueHeatMapRepository]
     end
 
     ZXY -->|canopy_service| CTS
     ZXY -->|satelite_service| TS
-    WSH -->|weather_station_service| WSS
     HMH -->|heat_map_service| HMS
 
     CTS -->|spatial_tile_engine| SQE
@@ -94,7 +90,6 @@ graph TD
     TS -->|tile_stitcher| TST
     TS -->|repository| CIR
 
-    WSS -->|repository| JWR
     HMS -->|repository| CHR
 
     CIR -->|repository| GER
@@ -113,7 +108,6 @@ All inter-layer dependencies flow **inward** through abstract interfaces defined
 | `GET` | `/v1/satelite/{z}/{x}/{y}.png` | Raw satellite tile (Google Earth imagery) |
 | `GET` | `/v1/canopy/{z}/{x}/{y}.png` | AI-generated tree canopy mask tile |
 | `GET` | `/v1/heat-map/{city}/{time}.webp` | Meteoblue temperature heat-map image |
-| `GET` | `/v1/weather-stations` | All weather station locations and readings |
 
 #### Tile URL format
 
@@ -202,10 +196,6 @@ GET /v1/canopy/{z}/{x}/{y}.png    →  CanopyTileService.get_tile(z, x, y)
 ```
 
 Returns `image/png` or `404` if the tile could not be assembled.
-
-#### `WeatherStationHandler`
-
-Returns all weather station records (name, lat/lon, temperature readings) from a JSON file as a flat JSON array.
 
 #### `HeatMapHandler`
 
@@ -386,7 +376,7 @@ The trained model weights are stored in `models/tree_mask_autoencoder_model.kera
 
 ```bash
 # From the workspace root
-uvicorn satelite_temperature_prediction.tile_api.app:app --host 0.0.0.0 --port 8000 --reload
+uvicorn tile_api.app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 The API will be available at `http://localhost:8000`. Interactive docs at `http://localhost:8000/docs`.
@@ -395,7 +385,7 @@ The API will be available at `http://localhost:8000`. Interactive docs at `http:
 
 ```bash
 # In a separate terminal, from the workspace root
-streamlit run satelite_temperature_prediction/streamlit_app.py
+streamlit run streamlit_app.py
 ```
 
 ### Caches

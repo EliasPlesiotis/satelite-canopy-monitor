@@ -14,8 +14,6 @@ st.set_page_config(layout="wide", page_title="Satellite & Canopy Tiles Viewer")
 center_lat = 37.9838
 center_lon = 23.7275
 
-WEATHER_STATIONS_URL = "http://localhost:8000/v1/weather-stations"
-
 st.sidebar.header("Meteoblue Heat Map")
 selected_date = st.sidebar.date_input("Select Date", value=datetime.date(2026, 6, 28))
 selected_time = st.sidebar.time_input("Select Time", value=datetime.time(22, 0))
@@ -56,53 +54,6 @@ folium.raster_layers.ImageOverlay(
     overlay=True,
     control=True,
 ).add_to(m)
-
-@st.cache_data
-def load_weather_stations() -> list[dict]:
-    with urllib.request.urlopen(WEATHER_STATIONS_URL, timeout=40) as response:
-        return json.load(response)
-
-
-try:
-    weather_stations = load_weather_stations()
-    stations_layer = folium.FeatureGroup(name="Weather Stations Markers")
-
-    for station in weather_stations:
-        latitude = station.get("latitude")
-        longitude = station.get("longitude")
-        
-        if latitude is None or longitude is None:
-            continue
-
-        popup_text = (
-            f"<b>{station.get('name', 'Weather Station')}</b><br/>"
-            f"Temperature: {station.get('temperature', 'n/a')}°C<br/>"
-        )
-
-        folium.Marker(
-            location=[float(latitude), float(longitude)],
-            icon=DivIcon(
-                icon_size=(150,36),
-                icon_anchor=(25,20),
-                html=f'<div style="font-size: 18pt; color : white">{station.get('temperature')}</div>',
-            ),
-            popup=popup_text,
-            tooltip=station.get("name", "Weather Station"),
-        ).add_to(stations_layer)
-
-        folium.CircleMarker(
-            location=[float(latitude), float(longitude)],
-                radius=26,
-                color="cornflowerblue",
-                stroke=False,
-                fill=True,
-                fill_opacity=1,
-                opacity=1,
-        ).add_to(stations_layer)
-except Exception as exc:
-    st.warning(f"Could not load weather stations: {exc}")
-
-stations_layer.add_to(m)
 
 folium.LayerControl().add_to(m)
 
