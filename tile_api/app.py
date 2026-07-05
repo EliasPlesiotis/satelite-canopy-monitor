@@ -12,10 +12,10 @@ from tile_api.repositories.cached_heat_map_repository import CachedHeatMapReposi
 
 from tile_api.application.tile_service import TileService
 from tile_api.application.canopy_service import CanopyTileService
-from tile_api.application.tile_service import TileService
 from tile_api.application.spatial_query_engine import SpatialQueryEngine
 from tile_api.application.tile_stitcher import TileStitcher
 from tile_api.application.heat_map_service import HeatMapService
+from tile_api.application.worker_pool import WorkerPool
 
 from tile_api.handlers.zxy_handler import ZxyHandler
 from tile_api.handlers.heat_map_handler import HeatMapHandler
@@ -31,7 +31,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Root directory of the workspace
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = ROOT_DIR / "data"
 
@@ -51,9 +50,10 @@ cached_heat_map_repository = CachedHeatMapRepository(heat_map_repository, HEATMA
 
 tile_sticher = TileStitcher(target_size=256)
 spatial_tile_engine = SpatialQueryEngine(base_zoom=18)
+worker_pool = WorkerPool()
 
-canopy_service = CanopyTileService(spatial_tile_engine, tile_sticher, cached_google_earth_repository, cached_canopy_model_repository)
-satelite_service = TileService(spatial_tile_engine, tile_sticher, cached_google_earth_repository)
+canopy_service = CanopyTileService(spatial_tile_engine, tile_sticher, cached_google_earth_repository, cached_canopy_model_repository, worker_pool)
+satelite_service = TileService(spatial_tile_engine, tile_sticher, cached_google_earth_repository, worker_pool)
 heat_map_service = HeatMapService(cached_heat_map_repository)
 
 zxy_handler = ZxyHandler(canopy_service, satelite_service)

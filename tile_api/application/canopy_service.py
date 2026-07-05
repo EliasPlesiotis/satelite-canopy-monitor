@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from tile_api.application.repositories import ISateliteImageRepository
 from tile_api.application.repositories import IModelRepository
 from tile_api.application.spatial_query_engine import ISpatialQueryEngine
 from tile_api.application.tile_stitcher import ITileSticher
+from tile_api.application.worker_pool import IWorkerPool
 
 
 class ICanopyTileService(ABC):
@@ -19,12 +19,14 @@ class CanopyTileService(ICanopyTileService):
             tile_stitcher: ITileSticher, 
             image_repository: ISateliteImageRepository, 
             model_repository: IModelRepository,
+            worker_pool: IWorkerPool,
             max_workers: int = 4
         ):
         self.spatial_query_engine = spatial_query_engine
         self.tile_stitcher = tile_stitcher
         self.image_repository = image_repository
         self.model_repository = model_repository
+        self.worker_pool = worker_pool
         self.max_workers = max_workers
 
     def get_tile(self, z: int, x: int, y: int):
@@ -32,25 +34,8 @@ class CanopyTileService(ICanopyTileService):
         if not tiles:
             return None
 
-        images = [None] * len(tiles)
         max_failures = min(len(tiles), 20)
-        failures = 0
-
-        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            futures = {
-                executor.submit(self.image_repository.get_image, tile.x, tile.y, tile.zoom): index
-                for index, tile in enumerate(tiles)
-            }
-            for future in as_completed(futures):
-                index = futures[future]
-                try:
-                    images[index] = future.result()
-                except Exception:
-                    failures += 1
-                    if failures >= max_failures:
-                        for pending_future in futures:
-                            pending_future.cancel()
-                        break
+        images = self.worker_pool.fetch_images_parallel(tiles, self.image_repository.get_image, self.max_workers, max_failures)
 
         predictions = self.model_repository.batch_predict(images)
 

@@ -86,6 +86,7 @@ graph TD
     subgraph Utilities
         SQE[SpatialQueryEngine]
         TST[TileStitcher]
+        WP[WorkerPool]
     end
 
     subgraph CachedRepositories
@@ -106,11 +107,13 @@ graph TD
 
     CTS -->|spatial_tile_engine| SQE
     CTS -->|tile_stitcher| TST
+    CTS -->|worker_pool| WP
     CTS -->|image_repository| CIR
     CTS -->|model_repository| CMR
 
     TS -->|spatial_tile_engine| SQE
     TS -->|tile_stitcher| TST
+    TS -->|worker_pool| WP
     TS -->|repository| CIR
 
     HMS -->|repository| CHR
@@ -253,6 +256,10 @@ Assembles 256×256 output PNG from a list of fetched tile images:
 - **Lower zoom** → creates a blank canvas, resizes each sub-tile to `256 / scale` pixels and pastes at the correct offset
 - **Higher zoom** → crops the `sub_size × sub_size` quadrant from the base tile and upscales to 256×256 using Lanczos resampling
 
+#### `WorkerPool`
+
+Provides a reusable concurrency utility to execute tasks (like fetching tiles) in parallel using a `ThreadPoolExecutor`. It handles graceful degradation, tracking failures and cancelling pending futures if a maximum failure threshold is exceeded.
+
 #### `TileService` / `CanopyTileService`
 
 `TileService` returns raw satellite PNGs. `CanopyTileService` additionally:
@@ -260,7 +267,7 @@ Assembles 256×256 output PNG from a list of fetched tile images:
 1. Passes fetched tile bytes through `IModelRepository.batch_predict()`
 2. Stitches the resulting **canopy mask** images instead of the raw tiles
 
-Both services use `ThreadPoolExecutor` to fetch tiles in parallel and gracefully degrade (up to 20 individual tile failures before aborting).
+Both services delegate parallel tile fetching and failure handling to the injected `WorkerPool` (allowing up to 20 individual tile failures before aborting).
 
 ---
 
