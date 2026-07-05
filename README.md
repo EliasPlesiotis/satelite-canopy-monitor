@@ -68,19 +68,17 @@ The Tile API follows a clean **3-layer hexagonal architecture**:
 |---|---|
 | **Handlers** | Parse HTTP requests, call services, return responses |
 | **Application** | Business logic — coordinate translation, batching, stitching |
-| **Repositories** | Data access — Google Earth, Keras inference, JSON, Meteoblue |
+| **Repositories** | Data access — Google Earth, Keras inference, Meteoblue |
 
 ```mermaid
 graph TD
     subgraph Handlers
         ZXY[ZxyHandler]
-        HMH[HeatMapHandler]
     end
 
     subgraph Services
         CTS[CanopyTileService]
         TS[TileService]
-        HMS[HeatMapService]
     end
 
     subgraph Utilities
@@ -92,18 +90,15 @@ graph TD
     subgraph CachedRepositories
         CIR[CachedImageRepository]
         CMR[CachedModelRepository]
-        CHR[CachedHeatMapRepository]
     end
 
     subgraph ConcreteRepositories
         GER[GoogleEarthImageRepository]
         KMR[KerasModelRepository]
-        MHR[MeteoblueHeatMapRepository]
     end
 
     ZXY -->|canopy_service| CTS
     ZXY -->|satelite_service| TS
-    HMH -->|heat_map_service| HMS
 
     CTS -->|spatial_tile_engine| SQE
     CTS -->|tile_stitcher| TST
@@ -116,11 +111,8 @@ graph TD
     TS -->|worker_pool| WP
     TS -->|repository| CIR
 
-    HMS -->|repository| CHR
-
     CIR -->|repository| GER
     CMR -->|repository| KMR
-    CHR -->|repository| MHR
 ```
 
 All inter-layer dependencies flow **inward** through abstract interfaces defined in `repositories.py`, making each layer independently testable and swappable.
